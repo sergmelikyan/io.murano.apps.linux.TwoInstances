@@ -34,8 +34,8 @@ Workflow:
       - $this.find(std:Environment).reporter.report($this, 'Instances were created.')
       - $resources: new('io.murano.system.Resources')
       - $template: $resources.yaml('Deploy.template').bind(dict(
-          ipaddress1 => $ipaddress1,
-          ipaddress2 => $ipaddress2
+          ipaddress1 => $.instances[0].ipAddresses[0],
+          ipaddress2 => $.instances[1].ipAddresses[0]
          ))
       - $.instance.agent.call($template, $resources)
       - $this.find(std:Environment).reporter.report($this, 'Two Instances setup was done.')
