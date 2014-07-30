@@ -1,0 +1,42 @@
+Namespaces:
+  =: io.murano.apps.linux
+  std: io.murano
+  res: io.murano.resources
+
+Name: TwoInstances
+
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+
+  instances:
+    Contract: 
+     - $.class(res:Instance).notNull()
+
+
+Workflow:
+  initialize:
+    Body:
+      - $.environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - $this.find(std:Environment).reporter.report($this, 'Creating VM for Telnet instace.')
+      - $securityGroupIngress:
+          - ToPort: 23
+            FromPort: 23
+            IpProtocol: tcp
+            External: True
+      - $.environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+      - $.instances.pselect($.deploy())
+      - $this.find(std:Environment).reporter.report($this, 'Instances were created.')
+      - $resources: new('io.murano.system.Resources')
+      - $template: $resources.yaml('Deploy.template').bind(dict(
+          ipaddress1 => $ipaddress1,
+          ipaddress2 => $ipaddress2
+         ))
+      - $.instance.agent.call($template, $resources)
+      - $this.find(std:Environment).reporter.report($this, 'Two Instances setup was done.')
+

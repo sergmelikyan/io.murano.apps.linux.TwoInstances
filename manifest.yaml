@@ -1,0 +1,12 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.linux.TwoInstances
+Name: TwoInstances
+Description: |
+ This app will create two instances and will store IP address of instances 
+Author: 'Bharath Thiruveedula'
+Tags: [Linux, connection]
+Classes:
+ io.murano.apps.linux.TwoInstances: twoInstances.yaml
+UI: twoinstances.yaml
+Logo: twoInstances.png
