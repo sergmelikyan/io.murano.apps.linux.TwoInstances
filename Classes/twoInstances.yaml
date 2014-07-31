@@ -12,7 +12,10 @@ Properties:
     Contract: $.string().notNull()
 
   instances:
-    Contract: 
+    Contract:
+    # this contract is incorrect, you intend to store in this property
+    # collection with at least two objects of type Instance, contract should be
+    # changed to following: [$.class(res:Instance)]
      - $.class(res:Instance).notNull()
 
 
@@ -23,6 +26,10 @@ Workflow:
 
   deploy:
     Body:
+      # you can reuse variable environment set above:
+      # $.environment.reporter.report($this, 'Creating VM for Telnet instace.')
+      # this applies to all other calls to search Environment object inside this
+      # method
       - $this.find(std:Environment).reporter.report($this, 'Creating VM for Telnet instace.')
       - $securityGroupIngress:
           - ToPort: 23
@@ -37,6 +44,9 @@ Workflow:
           ipaddress1 => $.instances[0].ipAddresses[0],
           ipaddress2 => $.instances[1].ipAddresses[0]
          ))
+      # here you are using incorrect parameter name, should be:
+      # $.instances[0] or you can execute template above on each instance:
+      # $.instances.pselect($.agent.call($template, $resources)
       - $.instance.agent.call($template, $resources)
       - $this.find(std:Environment).reporter.report($this, 'Two Instances setup was done.')
 
